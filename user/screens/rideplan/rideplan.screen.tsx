@@ -266,26 +266,36 @@ export default function RidePlanScreen() {
   const handleInputChange = (text: any) => {
     setQuery(text);
   };
-  const initializeWebSocket = () => {
-    ws.current = new WebSocket("wss://gurukul-yatra-1.onrender.com");
-    ws.current.onopen = () => {
-      console.log("Connected to websocket server");
-      setWsConnected(true);
-    };
+ const initializeWebSocket = useCallback(() => {
+  // Use Render's default HTTPS port with proper URL format
+  const wsUrl = "wss://gurukul-yatra-1.onrender.com"; 
+  
+  // Add connection timeout
+  const timeout = setTimeout(() => {
+    if (ws.current?.readyState === WebSocket.CONNECTING) {
+      ws.current.close();
+      Toast.show("Connection timeout", {type: "danger"});
+    }
+  }, 10000);
 
-    ws.current.onerror = (e: any) => {
-      console.log("WebSocket error:", e.message);
-    };
+  ws.current = new WebSocket(wsUrl);
 
-    ws.current.onclose = (e: any) => {
-      console.log("WebSocket closed:", e.code, e.reason);
-      setWsConnected(false);
-      // Attempt to reconnect after a delay
-      setTimeout(() => {
-        initializeWebSocket();
-      }, 5000);
-    };
+  ws.current.onopen = () => {
+    clearTimeout(timeout);
+    console.log("✅ Authenticated connection");
+    setWsConnected(true);
   };
+
+  ws.current.onerror = (e:any) => {
+    console.error("Connection error:", e.message);
+    Toast.show("Connection error", {type: "danger"});
+  };
+
+  ws.current.onclose = (e:any) => {
+    clearTimeout(timeout);
+    console.log(`Connection closed (${e.code})`);
+  };
+}, []);
 
   useEffect(() => {
     initializeWebSocket();
