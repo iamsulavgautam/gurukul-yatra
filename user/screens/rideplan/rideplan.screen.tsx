@@ -746,49 +746,43 @@ export default function RidePlanScreen() {
                       width: Dimensions.get("window").width * 1 - 110,
                     }}
                   >
-               <GooglePlacesAutocomplete
-  placeholder="Kaha janeyy?"
-  onPress={(data, details = null) => {
-    setkeyboardAvoidingHeight(true);
-    setPlaces([{
-      description: data.description,
-      place_id: data.place_id,
-    }]);
-  }}
-  query={{
-    key: process.env.EXPO_PUBLIC_GOOGLE_CLOUD_API_KEY!,
-    language: "en",
-    region: "np", // Restrict to Nepal
-    components: "country:np", // Strict Nepal results
-    location: "28.0371,82.4735", // Ghorahi coordinates
-    radius: 20000, // 20km radius around Ghorahi/Dang
-    strictbounds: true, // Strict area restriction
-    types: "establishment", // Only show specific places
-  }}
-  styles={{
-    textInputContainer: {
-      width: "100%",
-    },
-    textInput: {
-      height: 38,
-      color: "#000",
-      fontSize: 16,
-    },
-    predefinedPlacesDescription: {
-      color: "#000",
-    },
-  }}
-  textInputProps={{
-    onChangeText: (text) => handleInputChange(text),
-    value: query,
-    onFocus: () => setkeyboardAvoidingHeight(true),
-  }}
-  onFail={(error) => console.log(error)}
-  fetchDetails={true}
-  debounce={200}
-  enablePoweredByContainer={false} // Remove Google branding
-  filterReverseGeocodingByTypes={['locality', 'administrative_area_level_3']} // Cities/towns
-/>
+                    <GooglePlacesAutocomplete
+                      placeholder="Kaha janeyy?"
+                      onPress={(data, details = null) => {
+                        setkeyboardAvoidingHeight(true);
+                        setPlaces([
+                          {
+                            description: data.description,
+                            place_id: data.place_id,
+                          },
+                        ]);
+                      }}
+                      query={{
+                        key: `${process.env.EXPO_PUBLIC_GOOGLE_CLOUD_API_KEY!}`,
+                        language: "en",
+                      }}
+                      styles={{
+                        textInputContainer: {
+                          width: "100%",
+                        },
+                        textInput: {
+                          height: 38,
+                          color: "#000",
+                          fontSize: 16,
+                        },
+                        predefinedPlacesDescription: {
+                          color: "#000",
+                        },
+                      }}
+                      textInputProps={{
+                        onChangeText: (text) => handleInputChange(text),
+                        value: query,
+                        onFocus: () => setkeyboardAvoidingHeight(true),
+                      }}
+                      onFail={(error) => console.log(error)}
+                      fetchDetails={true}
+                      debounce={200}
+                    />
                   </View>
                 </View>
               </View>
