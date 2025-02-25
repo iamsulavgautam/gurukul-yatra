@@ -21,7 +21,11 @@ const formatPhoneNumber = (phone: string): string | null => {
   return phoneRegex.test(phone) ? phone : null;
 };
 
-
+// Test
+export const Test = async (req: Request, res: Response) => {
+  res.status(200).json({ message: "API is working" });
+  console.log("Api test ok")
+};
 
 export const updatePushToken = async (req: Request, res: Response) => {
   try {
@@ -95,6 +99,7 @@ export const registerUser = async (req: Request, res: Response) => {
     });
   }
 };
+
 
 export const verifyOtp = async (req: Request, res: Response, next: NextFunction) => {
   try {
