@@ -63,36 +63,45 @@ export default function HomeScreen() {
     }),
   });
   useEffect(() => {
-    notificationListener.current =
-      Notifications.addNotificationReceivedListener((notification) => {
-        // Directly access the data object
-        const orderData = notification.request.content.data.orderData;
+    notificationListener.current = Notifications.addNotificationReceivedListener((notification) => {
+      try {
+        // Extract the data from the notification content
+        let { orderData } = notification.request.content.data;
   
-        // Ensure orderData exists and has expected structure
+        // Ensure orderData is parsed correctly
+        if (typeof orderData === "string") {
+          orderData = JSON.parse(orderData);
+        }
+  
         if (!orderData || !orderData.currentLocation || !orderData.marker) {
-          console.error("Invalid notification data structure");
+          console.error("Invalid orderData received:", orderData);
           return;
         }
   
-        // Update state with the parsed data
+        // Proceed with the parsed data
         setIsModalVisible(true);
-        setCurrentLocation(orderData.currentLocation);
-        setMarker(orderData.marker);
+        setCurrentLocation({
+          latitude: orderData.currentLocation.latitude,
+          longitude: orderData.currentLocation.longitude,
+        });
+        setMarker({
+          latitude: orderData.marker.latitude,
+          longitude: orderData.marker.longitude,
+        });
         setRegion({
           latitude: (orderData.currentLocation.latitude + orderData.marker.latitude) / 2,
           longitude: (orderData.currentLocation.longitude + orderData.marker.longitude) / 2,
-          latitudeDelta: Math.abs(
-            orderData.currentLocation.latitude - orderData.marker.latitude
-          ) * 2,
-          longitudeDelta: Math.abs(
-            orderData.currentLocation.longitude - orderData.marker.longitude
-          ) * 2,
+          latitudeDelta: Math.abs(orderData.currentLocation.latitude - orderData.marker.latitude) * 2,
+          longitudeDelta: Math.abs(orderData.currentLocation.longitude - orderData.marker.longitude) * 2,
         });
         setdistance(orderData.distance);
         setcurrentLocationName(orderData.currentLocationName);
         setdestinationLocationName(orderData.destinationLocation);
         setUserData(orderData.user);
-      });
+      } catch (error) {
+        console.error("Error processing notification data:", error);
+      }
+    });
   
     return () => {
       if (notificationListener.current) {

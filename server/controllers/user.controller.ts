@@ -201,40 +201,71 @@ export const verifyingEmail = async (req: Request, res: Response, next: NextFunc
   try {
     const { otp, token } = req.body;
 
-    const newUser: any = jwt.verify(token, process.env.EMAIL_ACTIVATION_SECRET!);
+    // Verify JWT first
+    const decoded: any = jwt.verify(token, process.env.EMAIL_ACTIVATION_SECRET!);
 
-    if (newUser.otp !== otp) {
-      return res.status(400).json({
+    // Check user existence
+    const existingUser = await prisma.user.findUnique({
+      where: { id: decoded.user.userId }
+    });
+
+    if (!existingUser) {
+      return res.status(404).json({
         success: false,
-        message: "OTP is not correct or expired!",
+        message: "User not found",
       });
     }
 
-    const { name, email, userId } = newUser.user;
+    // Validate OTP
+    if (decoded.otp !== otp) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid or expired OTP",
+      });
+    }
 
-    const user = await prisma.user.findUnique({
-      where: {
-        id: userId,
+    // Check if email already verified
+    if (existingUser.email) {
+      return res.status(400).json({
+        success: false,
+        message: "Email already verified",
+      });
+    }
+
+    // Update user data
+    const updatedUser = await prisma.user.update({
+      where: { id: existingUser.id },
+      data: {
+        name: decoded.user.name,
+        email: decoded.user.email,
       },
     });
 
-    if (user?.email === null) {
-      const updatedUser = await prisma.user.update({
-        where: {
-          id: userId,
-        },
-        data: {
-          name: name,
-          email: email,
-        },
-      });
-      await sendToken(updatedUser, res);
-    }
+    // Send final response
+    await sendToken(updatedUser, res);
+
   } catch (error) {
-    console.log(error);
-    res.status(400).json({
+    console.error("Email verification error:", error);
+    
+    // Handle specific JWT errors
+    if (error instanceof jwt.TokenExpiredError) {
+      return res.status(401).json({
+        success: false,
+        message: "Verification token expired",
+      });
+    }
+
+    if (error instanceof jwt.JsonWebTokenError) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid verification token",
+      });
+    }
+
+    // Generic error response
+    res.status(500).json({
       success: false,
-      message: "Your otp is expired!",
+      message: "Email verification failed",
     });
   }
 };

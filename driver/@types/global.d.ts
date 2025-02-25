@@ -9,6 +9,7 @@ type ButtonProps = {
 };
 type DriverType = {
   id: string;
+  vehicle?: VehicleType;
   name: string;
   country: string;
   phone_number: string;
