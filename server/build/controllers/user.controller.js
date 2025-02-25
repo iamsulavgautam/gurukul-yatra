@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getLoggedInUserData = exports.verifyingEmail = exports.sendingOtpToEmail = exports.verifyOtp = exports.registerUser = exports.updatePushToken = void 0;
+exports.getLoggedInUserData = exports.verifyingEmail = exports.sendingOtpToEmail = exports.verifyOtp = exports.registerUser = exports.updatePushToken = exports.Test = void 0;
 require("dotenv").config();
 const twilio_1 = __importDefault(require("twilio"));
 const prisma_1 = __importDefault(require("../utils/prisma"));
@@ -23,6 +23,12 @@ const formatPhoneNumber = (phone) => {
     }
     return phoneRegex.test(phone) ? phone : null;
 };
+// Test
+const Test = async (req, res) => {
+    res.status(200).json({ message: "API is working" });
+    console.log("Api test ok");
+};
+exports.Test = Test;
 const updatePushToken = async (req, res) => {
     try {
         const { userId, pushToken } = req.body;
