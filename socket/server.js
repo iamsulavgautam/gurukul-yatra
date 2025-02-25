@@ -8,25 +8,40 @@ const PORT = 4000;
 // Store driver locations
 let drivers = {};
 
+// Add test route
+app.get("/api/status", (req, res) => {
+  res.json({
+    status: "Server is running",
+    websocket: "Active on port 8080",
+    connectedDrivers: Object.keys(drivers).length,
+    sampleDriver: Object.keys(drivers).length > 0 ? 
+      drivers[Object.keys(drivers)[0]] : null
+  });
+});
+
 // Create WebSocket server
 const wss = new WebSocketServer({ port: 8080 });
 
+// Track WebSocket connections
+let wsConnections = 0;
+
 wss.on("connection", (ws) => {
+  wsConnections++;
+  
   ws.on("message", (message) => {
     try {
       const data = JSON.parse(message);
-      console.log("Received message:", data); // Debugging line
+      console.log("Received message:", data);
 
       if (data.type === "locationUpdate" && data.role === "driver") {
         drivers[data.driver] = {
           latitude: data.data.latitude,
           longitude: data.data.longitude,
+          timestamp: Date.now()
         };
-        console.log("Updated driver location:", drivers[data.driver]); // Debugging line
       }
 
       if (data.type === "requestRide" && data.role === "user") {
-        console.log("Requesting ride...");
         const nearbyDrivers = findNearbyDrivers(data.latitude, data.longitude);
         ws.send(
           JSON.stringify({ type: "nearbyDrivers", drivers: nearbyDrivers })
@@ -35,6 +50,10 @@ wss.on("connection", (ws) => {
     } catch (error) {
       console.log("Failed to parse WebSocket message:", error);
     }
+  });
+
+  ws.on("close", () => {
+    wsConnections--;
   });
 });
 
@@ -51,5 +70,7 @@ const findNearbyDrivers = (userLat, userLon) => {
 };
 
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`HTTP Server running on port ${PORT}`);
+  console.log(`Test endpoint: http://localhost:${PORT}/api/status`);
+  console.log(`WebSocket server running on port 8080`);
 });
