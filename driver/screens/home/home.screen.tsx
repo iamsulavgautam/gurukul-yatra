@@ -52,7 +52,7 @@ export default function HomeScreen() {
   const [currentLocation, setCurrentLocation] = useState<any>(null);
   const [lastLocation, setLastLocation] = useState<any>(null);
   const [recentRides, setrecentRides] = useState([]);
-  const ws = new WebSocket("wss://gurukul-yatra-sockets.onrender.com");
+  const ws = new WebSocket("wss://gurukul-yatra-1.onrender.com");
 
   const { colors } = useTheme();
   Notifications.setNotificationHandler({

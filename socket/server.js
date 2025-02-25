@@ -1,9 +1,10 @@
 const express = require("express");
+const { createServer } = require("http"); // Use HTTP server for WebSocket integration
 const { WebSocketServer } = require("ws");
 const geolib = require("geolib");
 
 const app = express();
-const PORT = 4000;
+const PORT = process.env.PORT || 4000; // Use assigned port or fallback to 4000 locally
 
 // Store driver locations
 let drivers = {};
@@ -12,23 +13,24 @@ let drivers = {};
 app.get("/api/status", (req, res) => {
   res.json({
     status: "Server is running",
-    websocket: "Active on port 8080",
+    websocket: "Active",
     connectedDrivers: Object.keys(drivers).length,
     sampleDriver: Object.keys(drivers).length > 0 ? 
       drivers[Object.keys(drivers)[0]] : null
   });
 });
 
-// Create WebSocket server
-const wss = new WebSocketServer({ port: 8080 });
+// Create HTTP server and attach WebSocket
+const server = createServer(app);
+const wss = new WebSocketServer({ server }); // Attach WebSocket to HTTP server
 
 // Track WebSocket connections
 let wsConnections = 0;
 
 wss.on("connection", (ws) => {
   wsConnections++;
+  console.log(`WebSocket connection established. Total connections: ${wsConnections}`);
 
-  // Driver and user location updates via WebSocket
   ws.on("message", (message) => {
     try {
       const data = JSON.parse(message);
@@ -38,7 +40,8 @@ wss.on("connection", (ws) => {
         drivers[data.driver] = {
           latitude: data.data.latitude,
           longitude: data.data.longitude,
-          timestamp: Date.now()
+          timestamp: Date.now(),
+          ws: ws // Store the WebSocket connection for cleanup
         };
       }
 
@@ -55,6 +58,7 @@ wss.on("connection", (ws) => {
 
   ws.on("close", () => {
     wsConnections--;
+    console.log(`WebSocket connection closed. Total connections: ${wsConnections}`);
     // Remove driver from the list if they disconnect
     for (const driverId in drivers) {
       if (drivers[driverId].ws === ws) {
@@ -77,8 +81,8 @@ const findNearbyDrivers = (userLat, userLon) => {
     .map(([id, location]) => ({ id, ...location }));
 };
 
-app.listen(PORT, () => {
-  console.log(`HTTP Server running on port ${PORT}`);
+// Start the server
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
   console.log(`Test endpoint: http://localhost:${PORT}/api/status`);
-  console.log(`WebSocket server running on port 8080`);
 });
