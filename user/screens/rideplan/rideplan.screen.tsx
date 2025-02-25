@@ -267,7 +267,7 @@ export default function RidePlanScreen() {
     setQuery(text);
   };
   const initializeWebSocket = () => {
-    ws.current = new WebSocket("ws://192.168.2.225:8080");
+    ws.current = new WebSocket("wss://gurukul-yatra-sockets.onrender.com");
     ws.current.onopen = () => {
       console.log("Connected to websocket server");
       setWsConnected(true);

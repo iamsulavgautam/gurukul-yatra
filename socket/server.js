@@ -27,7 +27,8 @@ let wsConnections = 0;
 
 wss.on("connection", (ws) => {
   wsConnections++;
-  
+
+  // Driver and user location updates via WebSocket
   ws.on("message", (message) => {
     try {
       const data = JSON.parse(message);
@@ -54,6 +55,13 @@ wss.on("connection", (ws) => {
 
   ws.on("close", () => {
     wsConnections--;
+    // Remove driver from the list if they disconnect
+    for (const driverId in drivers) {
+      if (drivers[driverId].ws === ws) {
+        delete drivers[driverId];
+        break;
+      }
+    }
   });
 });
 
