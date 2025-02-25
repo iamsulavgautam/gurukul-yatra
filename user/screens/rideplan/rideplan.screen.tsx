@@ -53,7 +53,7 @@ export default function RidePlanScreen() {
   const [distance, setDistance] = useState<any>(null);
   const [locationSelected, setLocationSelected] = useState(false);
   const [selectedVehicle, setSelectedVehicle] = useState("Car");
-  const [driverLists, setdriverLists] = useState([]);
+  const [driverLists, setdriverLists] = useState<DriverType[]>([]);
   const [selectedVehcile, setselectedVehcile] = useState("Car");
   const [driverLoader, setdriverLoader] = useState(true);
   const [selectedDriver, setselectedDriver] = useState<DriverType>();

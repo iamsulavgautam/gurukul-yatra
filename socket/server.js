@@ -21,14 +21,6 @@ wss.on("connection", (ws) => {
         drivers[data.driver] = {
           latitude: data.data.latitude,
           longitude: data.data.longitude,
-        };
-        console.log("Updated driver location:", drivers[data.driver]); // Debugging line
-      }
-
-      if (data.type === "locationUpdate" && data.role === "driver") {
-        drivers[data.driver] = {
-          latitude: data.data.latitude,
-          longitude: data.data.longitude,
           vehicle_type: data.vehicle_type || "default", // Ensure vehicle type exists
         };
         console.log("Updated driver location:", drivers[data.driver]);
@@ -51,6 +43,11 @@ const findNearbyDrivers = (userLat, userLon) => {
     })
     .map(([id, location]) => ({ id, ...location }));
 };
+
+// Test route to check if server is running
+app.get("/test", (req, res) => {
+  res.json({ message: "WebSocket server is working!", connectedClients: wss.clients.size });
+});
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

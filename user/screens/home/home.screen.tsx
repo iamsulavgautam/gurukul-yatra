@@ -29,8 +29,10 @@ const vehicles = [
     name: "Auto Rickshaw",
     icon: require("@/assets/icons/auto_rickshaw.png"),
     background: "#FFFFFF",
+    description: "Affordable three-wheeler ride", // ✅ Add this field
   },
 ];
+
 
 export default function HomeScreen() {
   const [currentLocation, setCurrentLocation] = useState<any>(null);
@@ -198,6 +200,15 @@ const styles = StyleSheet.create({
     height: 50,
     marginRight: 15,
     resizeMode: "contain",
+  },
+  vehicleName: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  description: {
+    fontSize: 12, // Smaller text for "Coming Soon"
+    color: "#666",
   },
   vehicleCard: {
     flexDirection: "row",

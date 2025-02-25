@@ -114,7 +114,7 @@ export default function HomeScreen() {
     registerForPushNotificationsAsync();
   }, []);
 
-  const updateDriverPushToken = async (token: string) => {
+  const updateDriverPushToken = async (token: string,  driverId: string) => {
     try {
       await axios.post(
         `${process.env.EXPO_PUBLIC_SERVER_URI}/driver/update-push-token`,
@@ -197,8 +197,9 @@ export default function HomeScreen() {
 
       return token;
     } catch (error) {
-      console.error("❌ Error in push notification setup:", error);
-      Toast.show(`Error setting up notifications: ${error.message}`, {
+      const err = error as Error; 
+      console.error("❌ Error in push notification setup:", err);
+      Toast.show(`Error setting up notifications: ${err.message}`, {
         type: "danger",
       });
     }
