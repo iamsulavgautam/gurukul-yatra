@@ -132,10 +132,12 @@ export default function HomeScreen() {
           pushToken: token,
         }
       );
+      
     } catch (error) {
       console.error("Error updating push token:", error);
     }
   };
+  
 
   const registerForPushNotificationsAsync = async () => {
     if (!Device.isDevice) {

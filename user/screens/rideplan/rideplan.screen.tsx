@@ -76,83 +76,91 @@ export default function RidePlanScreen() {
 
   const updateUserPushToken = async (token: string) => {
     try {
-      await axios.post(
+      const response = await axios.post(
         `${process.env.EXPO_PUBLIC_SERVER_URI}/user/update-push-token`,
         {
           userId: user.id,
           pushToken: token,
         }
       );
+  
+      if (response.status !== 200) {
+        throw new Error(`Server responded with status ${response.status}`);
+      }
+  
+      console.log("Push token updated successfully");
+      return true;
     } catch (error) {
       console.error("Error updating push token:", error);
+      Toast.show("Failed to update push token. Please try again.", {
+        type: "danger",
+      });
+      return false;
     }
   };
-
+  
   const registerForPushNotificationsAsync = async () => {
     if (!Device.isDevice) {
       Toast.show("Must use physical device for Push Notifications", {
         type: "danger",
       });
-      return;
+      return null;
     }
-
+  
     try {
-      const { status: existingStatus } =
-        await Notifications.getPermissionsAsync();
-      let finalStatus = existingStatus;
-
-      if (existingStatus !== "granted") {
-        const { status } = await Notifications.requestPermissionsAsync();
-        finalStatus = status;
+      // Wait for user data to be available
+      if (!user || !user.id) {
+        console.error("User data not available");
+        return null;
       }
-
-      if (finalStatus !== "granted") {
-        Toast.show("Failed to get push token for push notification!", {
-          type: "danger",
-        });
-        return;
+  
+      // Request/check permissions
+      let { status } = await Notifications.getPermissionsAsync();
+      if (status !== "granted") {
+        const { status: newStatus } = await Notifications.requestPermissionsAsync();
+        status = newStatus;
       }
-
-      const projectId =
-        Constants?.expoConfig?.extra?.eas?.projectId ??
-        Constants?.easConfig?.projectId;
+  
+      if (status !== "granted") {
+        Toast.show("Notification permission denied", { type: "danger" });
+        return null;
+      }
+  
+      // Get project ID
+      const projectId = Constants?.expoConfig?.extra?.eas?.projectId || 
+                        Constants?.easConfig?.projectId;
       if (!projectId) {
-        Toast.show("Failed to get project id for push notification!", {
-          type: "danger",
-        });
-        return;
+        Toast.show("Missing Expo project configuration", { type: "danger" });
+        return null;
       }
-
-      const token = (await Notifications.getExpoPushTokenAsync({ projectId }))
-        .data;
-
-      // ✅ Add this check to prevent accessing `pushNotificationId` of undefined
-      if (!user) {
-        console.error(
-          "Error: `user` is undefined. Make sure user is loaded before using it."
-        );
-        return;
+  
+      // Get and update token
+      const token = (await Notifications.getExpoPushTokenAsync({ projectId })).data;
+      console.log("Obtained Expo push token:", token);
+  
+      // Always update token (in case it changed)
+      const updateSuccess = await updateUserPushToken(token);
+      
+      if (!updateSuccess) {
+        Toast.show("Failed to save notification settings", { type: "danger" });
+        return null;
       }
-
-      if (!user.pushNotificationId) {
-        await updateUserPushToken(token);
-      }
-
+  
+      // Android-specific configuration
       if (Platform.OS === "android") {
-        Notifications.setNotificationChannelAsync("default", {
+        await Notifications.setNotificationChannelAsync("default", {
           name: "default",
           importance: Notifications.AndroidImportance.MAX,
           vibrationPattern: [0, 250, 250, 250],
           lightColor: "#FF231F7C",
         });
       }
-
+  
       return token;
     } catch (error) {
-      console.error("Error in push notification setup:", error);
-      Toast.show(`Error setting up notifications: ${error}`, {
-        type: "danger",
-      });
+      console.error("Push notification setup error:", error);
+      Toast.show("Failed to setup notifications", { type: "danger" });
+      return null;
     }
   };
 
@@ -582,62 +590,53 @@ export default function RidePlanScreen() {
                     </Text>
                   </View>
                   <View style={{ padding: windowWidth(10) }}>
-                    {driverLists?.map((driver: DriverType) => (
-                      <Pressable
-                        style={{
-                          width: windowWidth(420),
-                          borderWidth:
-                            selectedVehcile === driver.vehicle_type ? 2 : 0,
-                          borderRadius: 10,
-                          padding: 10,
-                          marginVertical: 5,
-                        }}
-                        onPress={() => {
-                          setselectedVehcile(driver.vehicle_type);
-                        }}
-                      >
-                        <View style={{ margin: "auto" }}>
-                          <Image
-                            source={
-                              driver?.vehicle_type === "Car"
-                                ? require("@/assets/images/vehicles/car.png")
-                                : driver?.vehicle_type === "Motorcycle"
-                                ? require("@/assets/images/vehicles/bike.png")
-                                : require("@/assets/images/vehicles/bike.png")
-                            }
-                            style={{ width: 90, height: 80 }}
-                          />
-                        </View>
-                        <View
-                          style={{
-                            flexDirection: "row",
-                            alignItems: "center",
-                            justifyContent: "space-between",
-                          }}
-                        >
-                          <View>
-                            <Text style={{ fontSize: 20, fontWeight: "600" }}>
-                              Gurukul Yatra {driver?.vehicle_type}
-                            </Text>
-                            <Text style={{ fontSize: 16 }}>
-                              {getEstimatedArrivalTime(travelTimes.driving)}{" "}
-                              dropoff
-                            </Text>
-                          </View>
-                          <Text
-                            style={{
-                              fontSize: windowWidth(20),
-                              fontWeight: "600",
-                            }}
-                          >
-                            NPR{" "}
-                            {(
-                              distance.toFixed(2) * parseInt(driver.rate)
-                            ).toFixed(2)}
-                          </Text>
-                        </View>
-                      </Pressable>
-                    ))}
+                  {driverLists?.slice(0, 1).map((driver: DriverType) => (
+  <Pressable
+    key={driver.id}
+    style={{
+      width: windowWidth(420),
+      borderWidth: selectedVehcile === driver.vehicle_type ? 2 : 0,
+      borderRadius: 10,
+      padding: 10,
+      marginVertical: 5,
+    }}
+    onPress={() => {
+      setselectedVehcile(driver.vehicle_type);
+    }}
+  >
+    <View style={{ margin: "auto" }}>
+      <Image
+        source={
+          driver.vehicle_type === "Car"
+            ? require("@/assets/images/vehicles/car.png")
+            : driver.vehicle_type === "Motorcycle"
+            ? require("@/assets/images/vehicles/bike.png")
+            : require("@/assets/images/vehicles/bike.png")
+        }
+        style={{ width: 90, height: 80 }}
+      />
+    </View>
+    <View
+      style={{
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+      }}
+    >
+      <View>
+        <Text style={{ fontSize: 20, fontWeight: "600" }}>
+          Gurukul Yatra {driver.vehicle_type}
+        </Text>
+        <Text style={{ fontSize: 16 }}>
+          {getEstimatedArrivalTime(travelTimes.driving)} dropoff
+        </Text>
+      </View>
+      <Text style={{ fontSize: windowWidth(20), fontWeight: "600" }}>
+        NPR {(distance.toFixed(2) * parseInt(driver.rate)).toFixed(2)}
+      </Text>
+    </View>
+  </Pressable>
+))}
 
                     <View
                       style={{
@@ -747,43 +746,49 @@ export default function RidePlanScreen() {
                       width: Dimensions.get("window").width * 1 - 110,
                     }}
                   >
-                    <GooglePlacesAutocomplete
-                      placeholder="Kaha janeyy?"
-                      onPress={(data, details = null) => {
-                        setkeyboardAvoidingHeight(true);
-                        setPlaces([
-                          {
-                            description: data.description,
-                            place_id: data.place_id,
-                          },
-                        ]);
-                      }}
-                      query={{
-                        key: `${process.env.EXPO_PUBLIC_GOOGLE_CLOUD_API_KEY!}`,
-                        language: "en",
-                      }}
-                      styles={{
-                        textInputContainer: {
-                          width: "100%",
-                        },
-                        textInput: {
-                          height: 38,
-                          color: "#000",
-                          fontSize: 16,
-                        },
-                        predefinedPlacesDescription: {
-                          color: "#000",
-                        },
-                      }}
-                      textInputProps={{
-                        onChangeText: (text) => handleInputChange(text),
-                        value: query,
-                        onFocus: () => setkeyboardAvoidingHeight(true),
-                      }}
-                      onFail={(error) => console.log(error)}
-                      fetchDetails={true}
-                      debounce={200}
-                    />
+               <GooglePlacesAutocomplete
+  placeholder="Kaha janeyy?"
+  onPress={(data, details = null) => {
+    setkeyboardAvoidingHeight(true);
+    setPlaces([{
+      description: data.description,
+      place_id: data.place_id,
+    }]);
+  }}
+  query={{
+    key: process.env.EXPO_PUBLIC_GOOGLE_CLOUD_API_KEY!,
+    language: "en",
+    region: "np", // Restrict to Nepal
+    components: "country:np", // Strict Nepal results
+    location: "28.0371,82.4735", // Ghorahi coordinates
+    radius: 20000, // 20km radius around Ghorahi/Dang
+    strictbounds: true, // Strict area restriction
+    types: "establishment", // Only show specific places
+  }}
+  styles={{
+    textInputContainer: {
+      width: "100%",
+    },
+    textInput: {
+      height: 38,
+      color: "#000",
+      fontSize: 16,
+    },
+    predefinedPlacesDescription: {
+      color: "#000",
+    },
+  }}
+  textInputProps={{
+    onChangeText: (text) => handleInputChange(text),
+    value: query,
+    onFocus: () => setkeyboardAvoidingHeight(true),
+  }}
+  onFail={(error) => console.log(error)}
+  fetchDetails={true}
+  debounce={200}
+  enablePoweredByContainer={false} // Remove Google branding
+  filterReverseGeocodingByTypes={['locality', 'administrative_area_level_3']} // Cities/towns
+/>
                   </View>
                 </View>
               </View>
