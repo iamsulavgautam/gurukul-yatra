@@ -65,50 +65,39 @@ export default function HomeScreen() {
   useEffect(() => {
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
-        // Extract the data directly from the notification content
+        // Directly access the data object
         const orderData = notification.request.content.data.orderData;
-        
-        // Check if orderData is a string (i.e., needs to be parsed)
-        let parsedOrderData = orderData;
-        if (typeof orderData === 'string') {
-          try {
-            parsedOrderData = JSON.parse(orderData);
-          } catch (error) {
-            console.error("Error parsing orderData:", error);
-            return; // Exit if there's an issue parsing
-          }
+  
+        // Ensure orderData exists and has expected structure
+        if (!orderData || !orderData.currentLocation || !orderData.marker) {
+          console.error("Invalid notification data structure");
+          return;
         }
   
-        // Proceed with the parsed data
+        // Update state with the parsed data
         setIsModalVisible(true);
-        setCurrentLocation({
-          latitude: parsedOrderData.currentLocation.latitude,
-          longitude: parsedOrderData.currentLocation.longitude,
-        });
-        setMarker({
-          latitude: parsedOrderData.marker.latitude,
-          longitude: parsedOrderData.marker.longitude,
-        });
+        setCurrentLocation(orderData.currentLocation);
+        setMarker(orderData.marker);
         setRegion({
-          latitude:
-            (parsedOrderData.currentLocation.latitude + parsedOrderData.marker.latitude) /
-            2,
-          longitude:
-            (parsedOrderData.currentLocation.longitude + parsedOrderData.marker.longitude) /
-            2,
-          latitudeDelta:
-            Math.abs(parsedOrderData.currentLocation.latitude - parsedOrderData.marker.latitude) * 2,
-          longitudeDelta:
-            Math.abs(parsedOrderData.currentLocation.longitude - parsedOrderData.marker.longitude) * 2,
+          latitude: (orderData.currentLocation.latitude + orderData.marker.latitude) / 2,
+          longitude: (orderData.currentLocation.longitude + orderData.marker.longitude) / 2,
+          latitudeDelta: Math.abs(
+            orderData.currentLocation.latitude - orderData.marker.latitude
+          ) * 2,
+          longitudeDelta: Math.abs(
+            orderData.currentLocation.longitude - orderData.marker.longitude
+          ) * 2,
         });
-        setdistance(parsedOrderData.distance);
-        setcurrentLocationName(parsedOrderData.currentLocationName);
-        setdestinationLocationName(parsedOrderData.destinationLocation);
-        setUserData(parsedOrderData.user);
+        setdistance(orderData.distance);
+        setcurrentLocationName(orderData.currentLocationName);
+        setdestinationLocationName(orderData.destinationLocation);
+        setUserData(orderData.user);
       });
   
     return () => {
-      Notifications.removeNotificationSubscription(notificationListener.current);
+      if (notificationListener.current) {
+        Notifications.removeNotificationSubscription(notificationListener.current);
+      }
     };
   }, []);
   
