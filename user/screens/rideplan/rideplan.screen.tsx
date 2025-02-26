@@ -756,43 +756,45 @@ export default function RidePlanScreen() {
                       width: Dimensions.get("window").width * 1 - 110,
                     }}
                   >
-                    <GooglePlacesAutocomplete
-                      placeholder="Kaha janeyy?"
-                      onPress={(data, details = null) => {
-                        setkeyboardAvoidingHeight(true);
-                        setPlaces([
-                          {
-                            description: data.description,
-                            place_id: data.place_id,
-                          },
-                        ]);
-                      }}
-                      query={{
-                        key: `${process.env.EXPO_PUBLIC_GOOGLE_CLOUD_API_KEY!}`,
-                        language: "en",
-                      }}
-                      styles={{
-                        textInputContainer: {
-                          width: "100%",
-                        },
-                        textInput: {
-                          height: 38,
-                          color: "#000",
-                          fontSize: 16,
-                        },
-                        predefinedPlacesDescription: {
-                          color: "#000",
-                        },
-                      }}
-                      textInputProps={{
-                        onChangeText: (text) => handleInputChange(text),
-                        value: query,
-                        onFocus: () => setkeyboardAvoidingHeight(true),
-                      }}
-                      onFail={(error) => console.log(error)}
-                      fetchDetails={true}
-                      debounce={200}
-                    />
+               <GooglePlacesAutocomplete
+  placeholder="Kaha janeyy?"
+  onPress={(data, details = null) => {
+    setkeyboardAvoidingHeight(true);
+    setPlaces([{
+      description: data.description,
+      place_id: data.place_id,
+    }]);
+  }}
+  query={{
+    key: process.env.EXPO_PUBLIC_GOOGLE_CLOUD_API_KEY,
+    language: "en",
+    // Add these parameters for 24km radius
+    location: `${currentLocation?.latitude},${currentLocation?.longitude}`,
+    radius: 24000, // 24km in meters
+    strictbounds: true,
+  }}
+  styles={{
+    textInputContainer: { width: "100%" },
+    textInput: {
+      height: 38,
+      color: "#000",
+      fontSize: 16,
+    },
+    predefinedPlacesDescription: { color: "#000" },
+  }}
+  textInputProps={{
+    onChangeText: (text) => handleInputChange(text),
+    value: query,
+    onFocus: () => setkeyboardAvoidingHeight(true),
+  }}
+  onFail={(error) => console.log(error)}
+  fetchDetails={true}
+  debounce={200}
+  // Additional props for location restriction
+  currentLocation={true}
+  currentLocationLabel="Your current location"
+  enablePoweredByContainer={false}
+/>
                   </View>
                 </View>
               </View>

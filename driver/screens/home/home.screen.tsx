@@ -119,8 +119,11 @@ export default function HomeScreen() {
   }, []);
 
   useEffect(() => {
-    registerForPushNotificationsAsync();
-  }, []);
+    // Only run when driver data is fully loaded
+    if (!DriverDataLoading && driver) {
+      registerForPushNotificationsAsync();
+    }
+  }, [DriverDataLoading, driver]); // Add dependencies here
 
   const updateDriverPushToken = async (token: string,  driverId: string) => {
     try {

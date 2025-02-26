@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "Gurukulyatra-Driver",
-    "slug": "Gurukulyatra-Driver",
+    "name": "Gurukulyatra_Driver",
+    "slug": "gurukulyatradriver",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "scheme": "Gurukulyatra-Driver",
+    "scheme": "Gurukulyatra_Driver",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
@@ -14,17 +14,18 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.sulavgautam.GurukulyatraDriver"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.sulavgautam.Gurukulyatra-Driver",
+      "package": "com.sulavgautam.GurukulyatraDriver",
       "config": {
         "googleMaps": {
-          "apiKey": ""
+          "apiKey": "AIzaSyDZifSZzVVOLp-P60kpAqG__CBxOtQjHrU"
         }
       }
     },
@@ -36,7 +37,9 @@
       [
         "expo-font",
         {
-          "fonts": ["./assets/fonts/TT-Octosquares-Medium.ttf"]
+          "fonts": [
+            "./assets/fonts/TT-Octosquares-Medium.ttf"
+          ]
         }
       ]
     ],
@@ -45,8 +48,12 @@
     },
     "extra": {
       "eas": {
-        "projectId": "e2767c7b-218e-44d4-b14e-9975146ce9ae"
+        "projectId": "6b8fda19-b77e-46bc-9ee9-06e5e4b70c09"
+      },
+      "router": {
+        "origin": false
       }
-    }
+    },
+    "owner": "sulavgautam"
   }
 }
