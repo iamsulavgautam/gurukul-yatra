@@ -1,10 +1,15 @@
 const express = require("express");
+const cors = require("cors");
 const { createServer } = require("http"); // Use HTTP server for WebSocket integration
 const { WebSocketServer } = require("ws");
 const geolib = require("geolib");
 
 const app = express();
 const PORT = process.env.PORT || 4000; // Use assigned port or fallback to 4000 locally
+
+app.use(cors({
+  origin: '*',  // Allow all origins
+}));
 
 // Store driver locations
 let drivers = {};
