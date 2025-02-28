@@ -29,7 +29,7 @@ export default function PhoneNumberVerificationScreen() {
         setLoader(true);
         const otpNumbers = `${otp}`;
         await axios
-          .post(`${Constants.manifest.extra.EXPO_PUBLIC_SERVER_URI}/driver/verify-otp`, {
+          .post(`${Constants.expoConfig?.extra?.EXPO_PUBLIC_SERVER_URI}/driver/verify-otp`, {
             phone_number: driver.phone_number,
             otp: otpNumbers,
             ...driver,

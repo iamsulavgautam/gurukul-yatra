@@ -25,7 +25,7 @@ export default function EmailVerificationScreen() {
     const otpNumbers = `${otp}`;
     await axios
       .post(
-        `${Constants.manifest.extra.EXPO_PUBLIC_SERVER_URI}/driver/registration-driver`,
+        `${Constants.expoConfig?.extra?.EXPO_PUBLIC_SERVER_URI}/driver/registration-driver`,
         {
           token: driver.token,
           otp: otpNumbers,

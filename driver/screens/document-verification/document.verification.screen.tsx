@@ -50,7 +50,7 @@ export default function DocumentVerificationScreen() {
     };
 
     await axios
-      .post(`${Constants.manifest.extra.EXPO_PUBLIC_SERVER_URI}/driver/send-otp`, {
+      .post(`${Constants.expoConfig?.extra?.EXPO_PUBLIC_SERVER_URI}/driver/send-otp`, {
         phone_number: `+${driverData.phone_number}`,
       })
       .then((res) => {

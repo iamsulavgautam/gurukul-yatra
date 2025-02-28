@@ -7,6 +7,12 @@
     "icon": "./assets/icon.png",
     "scheme": "Gurukulyatra_Driver",
     "userInterfaceStyle": "light",
+
+    "pushNotifications": {
+      "enabled": true,
+      "useNextNotificationsApi": true
+    },
+
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash.png",
@@ -26,9 +32,12 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff",
-        "permissions": [
-          "INTERNET"
-        ]
+        "permissions": ["INTERNET"]
+      },
+      "googleServicesFile": "./google-services.json",
+      "fcm": {
+        "apiKey": "AIzaSyBMJG64yln6KCJpNPz5mBbvcG3G8OJcoas",
+        "projectId": "gurukulyatra-d5297"
       },
       "package": "com.sulavgautam.DriverGurukulYatra",
       "config": {
@@ -45,9 +54,7 @@
       [
         "expo-font",
         {
-          "fonts": [
-            "./assets/fonts/TT-Octosquares-Medium.ttf"
-          ]
+          "fonts": ["./assets/fonts/TT-Octosquares-Medium.ttf"]
         }
       ]
     ],

@@ -13,7 +13,8 @@
     }, 
     "preview1": {
       "android": {
-        "buildType": "apk"
+        "buildType": "apk",
+        
       }
     },
     "preview2": {

@@ -133,7 +133,7 @@ export default function HomeScreen() {
   const updateDriverPushToken = async (token: string, driverId: string) => {
     try {
       await axios.post(
-        `${process.env.EXPO_PUBLIC_SERVER_URI}/driver/update-push-token`,
+        `${Constants.expoConfig?.extra?.EXPO_PUBLIC_SERVER_URI}/driver/update-push-token`,
         {
           driverId: driverId, // Use parameter instead of driver?.id
           pushToken: token,
@@ -202,7 +202,7 @@ export default function HomeScreen() {
       return token;
     } catch (error) {
       console.error("Push notification setup failed:", error);
-      Toast.show("Notification setup failed", { type: "danger" });
+      Toast.show(`Notification setup failed ${error} `, { type: "danger" });
     }
   };
   // socket updates
@@ -255,7 +255,7 @@ export default function HomeScreen() {
   const sendLocationUpdate = async (location: any) => {
     const accessToken = await AsyncStorage.getItem("accessToken");
     await axios
-      .get(`${Constants.manifest.extra.EXPO_PUBLIC_SERVER_URI}/driver/me`, {
+      .get(`${Constants.expoConfig?.extra?.EXPO_PUBLIC_SERVER_URI}/driver/me`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -313,7 +313,7 @@ export default function HomeScreen() {
   const getRecentRides = async () => {
     const accessToken = await AsyncStorage.getItem("accessToken");
     const res = await axios.get(
-      `${Constants.manifest.extra.EXPO_PUBLIC_SERVER_URI}/driver/get-rides`,
+      `${Constants.expoConfig?.extra?.EXPO_PUBLIC_SERVER_URII}/driver/get-rides`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -336,7 +336,7 @@ export default function HomeScreen() {
       setloading(true);
       const accessToken = await AsyncStorage.getItem("accessToken");
       const changeStatus = await axios.put(
-        `${Constants.manifest.extra.EXPO_PUBLIC_SERVER_URI}/driver/update-status`,
+        `${Constants.expoConfig?.extra?.EXPO_PUBLIC_SERVER_URI}/driver/update-status`,
         {
           status: !isOn ? "active" : "inactive",
         },
@@ -377,7 +377,7 @@ export default function HomeScreen() {
     const accessToken = await AsyncStorage.getItem("accessToken");
     await axios
       .post(
-        `${Constants.manifest.extra.EXPO_PUBLIC_SERVER_URI}/driver/new-ride`,
+        `${Constants.expoConfig?.extra?.EXPO_PUBLIC_SERVER_URI}/driver/new-ride`,
         {
           userId: userData?.id!,
           charge: (distance * parseInt(driver?.rate!)).toFixed(2),
@@ -464,7 +464,7 @@ export default function HomeScreen() {
                     origin={currentLocation}
                     destination={marker}
                     apikey={
-                      Constants.manifest.extra.EXPO_PUBLIC_GOOGLE_CLOUD_API_KEY!
+                      Constants.expoConfig?.extra?.EXPO_PUBLIC_GOOGLE_CLOUD_API_KEY!
                     }
                     strokeWidth={4}
                     strokeColor="blue"

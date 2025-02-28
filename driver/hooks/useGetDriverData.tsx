@@ -11,7 +11,7 @@ export const useGetDriverData = () => {
     const getLoggedInDriverData = async () => {
       const accessToken = await AsyncStorage.getItem("accessToken");
       await axios
-        .get(`${Constants.manifest.extra.EXPO_PUBLIC_SERVER_URI}/driver/me`, {
+        .get(`${Constants.expoConfig?.extra?.EXPO_PUBLIC_SERVER_URI}/driver/me`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },

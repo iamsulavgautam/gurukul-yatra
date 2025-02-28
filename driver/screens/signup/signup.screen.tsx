@@ -12,9 +12,11 @@ import { countryNameItems } from "@/configs/country-name-list";
 import Button from "@/components/common/button";
 import color from "@/themes/app.colors";
 import { router } from "expo-router";
+import  Constants from "expo-constants";
 
 export default function SignupScreen() {
   const { colors } = useTheme();
+
   const [emailFormatWarning, setEmailFormatWarning] = useState("");
   const [showWarning, setShowWarning] = useState(false);
   const [formData, setFormData] = useState({
