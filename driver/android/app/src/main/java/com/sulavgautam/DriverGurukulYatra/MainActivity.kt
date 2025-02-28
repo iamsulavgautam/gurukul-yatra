@@ -1,4 +1,4 @@
-package com.sulavgautam.GurukulyatraDriver
+package com.sulavgautam.DriverGurukulYatra
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build

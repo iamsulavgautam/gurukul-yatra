@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import Constants from "expo-constants";
 
 export const useGetDriverData = () => {
   const [driver, setDriver] = useState<DriverType>();
@@ -10,7 +11,7 @@ export const useGetDriverData = () => {
     const getLoggedInDriverData = async () => {
       const accessToken = await AsyncStorage.getItem("accessToken");
       await axios
-        .get(`${process.env.EXPO_PUBLIC_SERVER_URI}/driver/me`, {
+        .get(`${Constants.manifest.extra.EXPO_PUBLIC_SERVER_URI}/driver/me`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },

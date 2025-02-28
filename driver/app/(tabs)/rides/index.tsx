@@ -5,6 +5,7 @@ import color from "@/themes/app.colors";
 import RideCard from "@/components/ride/ride.card";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import Constants from "expo-constants";
 import { windowHeight } from "@/themes/app.constant";
 
 export default function Rides() {
@@ -12,7 +13,7 @@ export default function Rides() {
   const getRecentRides = async () => {
     const accessToken = await AsyncStorage.getItem("accessToken");
     const res = await axios.get(
-      `${process.env.EXPO_PUBLIC_SERVER_URI}/driver/get-rides`,
+      `${Constants.manifest.extra.EXPO_PUBLIC_SERVER_URI}/driver/get-rides`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,

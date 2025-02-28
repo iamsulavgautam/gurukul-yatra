@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Gurukulyatra_Driver",
-    "slug": "gurukulyatradriver",
+    "slug": "gurukul-yata-driver",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -15,14 +15,22 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.sulavgautam.GurukulyatraDriver"
+      "bundleIdentifier": "com.sulavgautam.DriverGurukulYatra",
+      "infoPlist": {
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true
+        }
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#ffffff",
+        "permissions": [
+          "INTERNET"
+        ]
       },
-      "package": "com.sulavgautam.GurukulyatraDriver",
+      "package": "com.sulavgautam.DriverGurukulYatra",
       "config": {
         "googleMaps": {
           "apiKey": "AIzaSyDZifSZzVVOLp-P60kpAqG__CBxOtQjHrU"
@@ -48,11 +56,13 @@
     },
     "extra": {
       "eas": {
-        "projectId": "6b8fda19-b77e-46bc-9ee9-06e5e4b70c09"
+        "projectId": "49ef7c01-b6c3-4514-a5a7-1fb7cad5974a"
       },
       "router": {
         "origin": false
-      }
+      },
+      "EXPO_PUBLIC_SERVER_URI": "https://gurukul-yatra.onrender.com/api/v1",
+      "EXPO_PUBLIC_GOOGLE_CLOUD_API_KEY": "AIzaSyDZifSZzVVOLp-P60kpAqG__CBxOtQjHrU"
     },
     "owner": "sulavgautam"
   }

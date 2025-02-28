@@ -223,7 +223,7 @@ export default function RidePlanScreen() {
   // Function to generate nearby autos (simulate nearby autos)
   const generateNearbyAutos = (lat: number, lon: number) => {
     const nearbyAutos = [];
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 10; i++) {
       const randomLat = lat + (Math.random() - 0.5) * 0.05; // random variation within 2km
       const randomLon = lon + (Math.random() - 0.5) * 0.05; // random variation within 2km
       nearbyAutos.push({
@@ -346,6 +346,7 @@ export default function RidePlanScreen() {
   };
 
   const handlePlaceSelect = async (placeId: any) => {
+
     try {
       const response = await axios.get(
         `https://maps.googleapis.com/maps/api/place/details/json`,
@@ -642,7 +643,7 @@ export default function RidePlanScreen() {
         </Text>
       </View>
       <Text style={{ fontSize: windowWidth(20), fontWeight: "600" }}>
-        NPR {(distance.toFixed(2) * parseInt(driver.rate)).toFixed(2)}
+      NPR {(distance.toFixed(2) * parseInt(driver.rate)).toFixed(2)}
       </Text>
     </View>
   </Pressable>

@@ -21,7 +21,7 @@ import { windowHeight, windowWidth } from "@/themes/app.constant";
 import { Gps, Location } from "@/utils/icons";
 import color from "@/themes/app.colors";
 import Button from "@/components/common/button";
-import axios from "axios";
+import axios, { Axios } from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as GeoLocation from "expo-location";
 import { Toast } from "react-native-toast-notifications";
@@ -52,15 +52,20 @@ export default function HomeScreen() {
   const [currentLocation, setCurrentLocation] = useState<any>(null);
   const [lastLocation, setLastLocation] = useState<any>(null);
   const [recentRides, setrecentRides] = useState([]);
-  const ws = new WebSocket("wss://gurukul-yatra-1.onrender.com");  
+  const ws = new WebSocket("wss://gurukul-yatra-1.onrender.com");
   const { colors } = useTheme();
+
+  // Notification handler with potential for dynamic behavior
   Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-      shouldShowAlert: true,
-      shouldPlaySound: true,
-      shouldSetBadge: false,
-    }),
+    handleNotification: async (notification) => {
+      return {
+        shouldShowAlert: true,
+        shouldPlaySound: true,
+        shouldSetBadge: false,
+      };
+    },
   });
+
   useEffect(() => {
     notificationListener.current = Notifications.addNotificationReceivedListener((notification) => {
       try {
@@ -125,21 +130,28 @@ export default function HomeScreen() {
     }
   }, [DriverDataLoading, driver]); // Add dependencies here
 
-  const updateDriverPushToken = async (token: string,  driverId: string) => {
+  const updateDriverPushToken = async (token: string, driverId: string) => {
     try {
       await axios.post(
         `${process.env.EXPO_PUBLIC_SERVER_URI}/driver/update-push-token`,
         {
-          driverId: driver?.id,
+          driverId: driverId, // Use parameter instead of driver?.id
           pushToken: token,
         }
       );
-      
     } catch (error) {
       console.error("Error updating push token:", error);
     }
   };
   
+  useEffect(() => {
+    const initializeNotifications = async () => {
+      if (!DriverDataLoading && driver?.id) {
+        await registerForPushNotificationsAsync();
+      }
+    };
+    initializeNotifications();
+  }, [DriverDataLoading, driver?.id]); // More specific dependency
 
   const registerForPushNotificationsAsync = async () => {
     if (!Device.isDevice) {
@@ -148,57 +160,36 @@ export default function HomeScreen() {
       });
       return;
     }
-
+  
     try {
-      // ✅ Wait for driver data to load
-      if (DriverDataLoading) {
-        console.log("⏳ Driver data is still loading...");
-        return;
-      }
-
-      if (!driver) {
-        console.error(
-          "❌ Error: `driver` is undefined. Ensure data is loaded before using it."
-        );
-        return;
-      }
-
-      console.log("📌 Driver data:", driver); // Debug log
-
-      const { status: existingStatus } =
-        await Notifications.getPermissionsAsync();
+      if (DriverDataLoading) return;
+      if (!driver) return;
+  
+      const { status: existingStatus } = await Notifications.getPermissionsAsync();
       let finalStatus = existingStatus;
-
+  
       if (existingStatus !== "granted") {
         const { status } = await Notifications.requestPermissionsAsync();
         finalStatus = status;
       }
-
+  
       if (finalStatus !== "granted") {
-        Toast.show("Failed to get push token for push notification!", {
-          type: "danger",
-        });
+        Toast.show("Permission required for notifications!", { type: "danger" });
         return;
       }
-
-      const projectId =
-        Constants?.expoConfig?.extra?.eas?.projectId ??
-        Constants?.easConfig?.projectId;
+  
+      const projectId = Constants?.expoConfig?.extra?.eas?.projectId;
       if (!projectId) {
-        Toast.show("Failed to get project id for push notification!", {
-          type: "danger",
-        });
+        Toast.show("Project ID missing!", { type: "danger" });
         return;
       }
-
-      const token = (await Notifications.getExpoPushTokenAsync({ projectId }))
-        .data;
-
-      // ✅ Check and update the push token
-      if (!driver.pushNotificationId) {
-        await updateDriverPushToken(token, driver.id);
-      }
-
+  
+      const token = (await Notifications.getExpoPushTokenAsync({ projectId })).data;
+      
+      // Always update the token regardless of existing value
+      await updateDriverPushToken(token, driver.id);
+  
+      // Android channel setup
       if (Platform.OS === "android") {
         Notifications.setNotificationChannelAsync("default", {
           name: "default",
@@ -207,17 +198,13 @@ export default function HomeScreen() {
           lightColor: "#FF231F7C",
         });
       }
-
+  
       return token;
     } catch (error) {
-      const err = error as Error; 
-      console.error("❌ Error in push notification setup:", err);
-      Toast.show(`Error setting up notifications: ${err.message}`, {
-        type: "danger",
-      });
+      console.error("Push notification setup failed:", error);
+      Toast.show("Notification setup failed", { type: "danger" });
     }
   };
-
   // socket updates
   useEffect(() => {
     ws.onopen = () => {
@@ -268,7 +255,7 @@ export default function HomeScreen() {
   const sendLocationUpdate = async (location: any) => {
     const accessToken = await AsyncStorage.getItem("accessToken");
     await axios
-      .get(`${process.env.EXPO_PUBLIC_SERVER_URI}/driver/me`, {
+      .get(`${Constants.manifest.extra.EXPO_PUBLIC_SERVER_URI}/driver/me`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -326,7 +313,7 @@ export default function HomeScreen() {
   const getRecentRides = async () => {
     const accessToken = await AsyncStorage.getItem("accessToken");
     const res = await axios.get(
-      `${process.env.EXPO_PUBLIC_SERVER_URI}/driver/get-rides`,
+      `${Constants.manifest.extra.EXPO_PUBLIC_SERVER_URI}/driver/get-rides`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -349,7 +336,7 @@ export default function HomeScreen() {
       setloading(true);
       const accessToken = await AsyncStorage.getItem("accessToken");
       const changeStatus = await axios.put(
-        `${process.env.EXPO_PUBLIC_SERVER_URI}/driver/update-status`,
+        `${Constants.manifest.extra.EXPO_PUBLIC_SERVER_URI}/driver/update-status`,
         {
           status: !isOn ? "active" : "inactive",
         },
@@ -385,10 +372,12 @@ export default function HomeScreen() {
   };
 
   const acceptRideHandler = async () => {
+    console.log(userData.pushNotificationId);
+
     const accessToken = await AsyncStorage.getItem("accessToken");
     await axios
       .post(
-        `${process.env.EXPO_PUBLIC_SERVER_URI}/driver/new-ride`,
+        `${Constants.manifest.extra.EXPO_PUBLIC_SERVER_URI}/driver/new-ride`,
         {
           userId: userData?.id!,
           charge: (distance * parseInt(driver?.rate!)).toFixed(2),
@@ -411,8 +400,7 @@ export default function HomeScreen() {
           distance,
         };
 
-        const driverPushToken = `${userData.pushNotificationId}`;
-
+        const driverPushToken = userData.pushNotificationId;
         await sendPushNotification(driverPushToken, data);
 
         const rideData = {
@@ -475,7 +463,9 @@ export default function HomeScreen() {
                   <MapViewDirections
                     origin={currentLocation}
                     destination={marker}
-                    apikey={process.env.EXPO_PUBLIC_GOOGLE_CLOUD_API_KEY!}
+                    apikey={
+                      Constants.manifest.extra.EXPO_PUBLIC_GOOGLE_CLOUD_API_KEY!
+                    }
                     strokeWidth={4}
                     strokeColor="blue"
                   />

@@ -55,17 +55,7 @@ export default function Profile() {
           placeholder="Country"
           items={countryNameItems}
         />
-        <View style={{ marginVertical: 25 }}>
-          <Button
-            onPress={async () => {
-              await AsyncStorage.removeItem("accessToken");
-              router.push("/(routes)/login");
-            }}
-            title="Log Out"
-            height={windowHeight(35)}
-            backgroundColor="crimson"
-          />
-        </View>
+       
       </View>
     </View>
   );

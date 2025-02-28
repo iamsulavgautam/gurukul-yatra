@@ -8,6 +8,7 @@ import { style } from "./style";
 import color from "@/themes/app.colors";
 import { external } from "@/styles/external.style";
 import { commonStyles } from "@/styles/common.style";
+import Constants from 'expo-constants';
 import Button from "@/components/common/button";
 import { router, useLocalSearchParams } from "expo-router";
 import { Toast } from "react-native-toast-notifications";
@@ -28,7 +29,7 @@ export default function PhoneNumberVerificationScreen() {
         setLoader(true);
         const otpNumbers = `${otp}`;
         await axios
-          .post(`${process.env.EXPO_PUBLIC_SERVER_URI}/driver/verify-otp`, {
+          .post(`${Constants.manifest.extra.EXPO_PUBLIC_SERVER_URI}/driver/verify-otp`, {
             phone_number: driver.phone_number,
             otp: otpNumbers,
             ...driver,
@@ -54,7 +55,7 @@ export default function PhoneNumberVerificationScreen() {
         setLoader(true);
         const otpNumbers = `${otp}`;
         await axios
-          .post(`${process.env.EXPO_PUBLIC_SERVER_URI}/driver/login`, {
+          .post(`${Constants.manifest2?.extra?.EXPO_PUBLIC_SERVER_URI}/driver/login`, {
             phone_number: driver.phone_number,
             otp: otpNumbers,
           })

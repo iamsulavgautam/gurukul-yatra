@@ -14,6 +14,8 @@ import color from "@/themes/app.colors";
 import axios from "axios";
 import { router, useLocalSearchParams } from "expo-router";
 import { Toast } from "react-native-toast-notifications";
+import Constants from 'expo-constants';
+
 
 export default function DocumentVerificationScreen() {
   const driverData = useLocalSearchParams();
@@ -48,7 +50,7 @@ export default function DocumentVerificationScreen() {
     };
 
     await axios
-      .post(`${process.env.EXPO_PUBLIC_SERVER_URI}/driver/send-otp`, {
+      .post(`${Constants.manifest.extra.EXPO_PUBLIC_SERVER_URI}/driver/send-otp`, {
         phone_number: `+${driverData.phone_number}`,
       })
       .then((res) => {

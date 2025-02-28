@@ -1,4 +1,4 @@
-package com.sulavgautam.GurukulyatraDriver
+package com.sulavgautam.DriverGurukulYatra
 
 import android.app.Application
 import android.content.res.Configuration

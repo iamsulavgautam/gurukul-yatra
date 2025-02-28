@@ -8,6 +8,7 @@ import color from "@/themes/app.colors";
 import Button from "@/components/common/button";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import  Constants from "expo-constants";
 import { Toast } from "react-native-toast-notifications";
 
 export default function RideDetailsScreen() {
@@ -49,7 +50,7 @@ export default function RideDetailsScreen() {
     const accessToken = await AsyncStorage.getItem("accessToken");
     await axios
       .put(
-        `${process.env.EXPO_PUBLIC_SERVER_URI}/driver/update-ride-status`,
+        `${Constants.manifest.extra.EXPO_PUBLIC_SERVER_URI}/driver/update-ride-status`,
         {
           rideStatus: orderStatus === "Ongoing" ? "Completed" : "Ongoing",
           rideId: orderData?.rideData.id,
@@ -92,7 +93,7 @@ export default function RideDetailsScreen() {
             <MapViewDirections
               origin={orderData?.currentLocation}
               destination={orderData?.marker}
-              apikey={process.env.EXPO_PUBLIC_GOOGLE_CLOUD_API_KEY!}
+              apikey={Constants.manifest2?.extra?.EXPO_PUBLIC_GOOGLE_CLOUD_API_KEY!}
               strokeWidth={4}
               strokeColor="blue"
             />

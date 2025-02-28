@@ -12,6 +12,7 @@ import color from "@/themes/app.colors";
 import { Toast } from "react-native-toast-notifications";
 import OTPTextInput from "react-native-otp-textinput";
 import axios from "axios";
+import Constants from "expo-constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function EmailVerificationScreen() {
@@ -24,7 +25,7 @@ export default function EmailVerificationScreen() {
     const otpNumbers = `${otp}`;
     await axios
       .post(
-        `${process.env.EXPO_PUBLIC_SERVER_URI}/driver/registration-driver`,
+        `${Constants.manifest.extra.EXPO_PUBLIC_SERVER_URI}/driver/registration-driver`,
         {
           token: driver.token,
           otp: otpNumbers,
