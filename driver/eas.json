@@ -23,7 +23,12 @@
       }
     },
     "production": {
-      "autoIncrement": true
+      "autoIncrement": true,
+      "distribution": "internal",  // Or "store" if you plan to submit to the Play Store
+      "android": {
+        "buildType": "apk", // Specify APK build type here
+        "gradleCommand": ":app:assembleRelease" // Optional: Use if you need custom gradle commands
+      }
     }
   },
   "submit": {
