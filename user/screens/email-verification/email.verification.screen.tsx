@@ -12,6 +12,7 @@ import Button from "@/components/common/button";
 import { style } from "../verification/style";
 import { Toast, useToast } from "react-native-toast-notifications";
 import axios from "axios";
+import Constants from "expo-constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function EmailVerificationScreen() {
@@ -24,7 +25,7 @@ export default function EmailVerificationScreen() {
 
     const otpNumbers = `${otp}`;
     await axios
-      .put(`${process.env.EXPO_PUBLIC_SERVER_URI}/email-otp-verify`, {
+      .put(`${Constants.expoConfig?.extra?.EXPO_PUBLIC_SERVER_URII}/email-otp-verify`, {
         token: parsedUser.token,
         otp: otpNumbers,
       })

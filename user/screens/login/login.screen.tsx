@@ -9,6 +9,7 @@ import { external } from "@/styles/external.style";
 import { router } from "expo-router";
 import PhoneNumberInput from "@/components/login/phone-number.input";
 import Button from "@/components/common/button";
+import Constants  from "expo-constants";
 import axios from "axios";
 import { useToast } from "react-native-toast-notifications";
 
@@ -29,7 +30,7 @@ export default function LoginScreen() {
       console.log(phone_number, countryCode);
       const phoneNumber = `${countryCode}${phone_number}`;
       await axios
-        .post(`${process.env.EXPO_PUBLIC_SERVER_URI}/registration`, {
+        .post(`${Constants.expoConfig?.extra?.EXPO_PUBLIC_SERVER_URI}/registration`, {
           phone_number: phoneNumber,
         })
         .then((res) => {

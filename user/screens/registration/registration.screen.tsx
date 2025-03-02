@@ -5,6 +5,7 @@ import { windowHeight, windowWidth } from "@/themes/app.constant";
 import TitleView from "@/components/signup/title.view";
 import Input from "@/components/common/input";
 import Button from "@/components/common/button";
+import Constants from "expo-constants";
 import color from "@/themes/app.colors";
 import { router, useLocalSearchParams } from "expo-router";
 import axios from "axios";
@@ -33,7 +34,7 @@ export default function RegistrationScreen() {
     setLoading(true);
 
     await axios
-      .post(`${process.env.EXPO_PUBLIC_SERVER_URI}/email-otp-request`, {
+      .post(`${Constants.expoConfig?.extra?.EXPO_PUBLIC_SERVER_URI}/email-otp-request`, {
         email: formData.email,
         name: formData.name,
         userId: parsedUser.id,

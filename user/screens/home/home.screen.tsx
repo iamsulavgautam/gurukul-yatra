@@ -17,6 +17,7 @@ import { commonStyles } from "@/styles/common.style";
 import { external } from "@/styles/external.style";
 import * as Location from "expo-location";
 import { Toast } from "react-native-toast-notifications";
+import Constants from "expo-constants";
 import { router } from "expo-router";
 
 // Get the screen width
@@ -133,7 +134,7 @@ export default function HomeScreen() {
               <MapViewDirections
                 origin={currentLocation}
                 destination={marker}
-                apikey={process.env.EXPO_PUBLIC_GOOGLE_CLOUD_API_KEY!}
+                apikey={Constants.expoConfig?.extra?.EXPO_PUBLIC_GOOGLE_CLOUD_API_KEY!}
                 strokeWidth={4}
                 strokeColor="blue"
               />

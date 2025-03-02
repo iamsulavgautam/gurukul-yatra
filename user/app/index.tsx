@@ -1,7 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Redirect } from "expo-router";
+import React from "react";
 import { useEffect, useState } from "react";
 import "react-native-get-random-values";
+import 'react-native-url-polyfill/auto';
 
 export default function index() {
   const [isLoggedIn, setisLoggedIn] = useState(false);

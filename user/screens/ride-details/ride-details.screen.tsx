@@ -5,6 +5,7 @@ import { fontSizes, windowHeight, windowWidth } from "@/themes/app.constant";
 import MapView, { Marker } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
 import color from "@/themes/app.colors";
+import Constants  from "expo-constants";
 
 export default function RideDetailsScreen() {
   const { orderData: orderDataObj } = useLocalSearchParams() as any;
@@ -81,7 +82,7 @@ if (!orderData?.driver) {
             <MapViewDirections
               origin={orderData?.driver?.currentLocation}
               destination={orderData?.driver?.marker}
-              apikey={process.env.EXPO_PUBLIC_GOOGLE_CLOUD_API_KEY!}
+              apikey={Constants.expoConfig?.extra?.EXPO_PUBLIC_GOOGLE_CLOUD_API_KEY!}
               strokeWidth={4}
               strokeColor="blue"
             />

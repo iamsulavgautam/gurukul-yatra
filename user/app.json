@@ -1,26 +1,43 @@
 {
   "expo": {
     "name": "Gurukulyatra",
-    "slug": "Gurukulyatra",
+    "slug": "gurukul-yatra",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "scheme": "Gurukulyatra",
     "userInterfaceStyle": "light",
+    "pushNotifications": {
+      "enabled": true,
+      "useNextNotificationsApi": true
+    },
+    "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.sulavgautam.Gurukulyatra",
+      "infoPlist": {
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true
+        }
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff",
-        "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"]
-
+        "permissions": [
+          "INTERNET"
+        ]
+      },
+      "googleServicesFile": "./google-services.json",
+      "fcm": {
+        "apiKey": "AIzaSyBMJG64yln6KCJpNPz5mBbvcG3G8OJcoas",
+        "projectId": "gurukulyatra-d5297"
       },
       "package": "com.sulavgautam.Gurukulyatra",
       "config": {
@@ -37,7 +54,9 @@
       [
         "expo-font",
         {
-          "fonts": ["./assets/fonts/TT-Octosquares-Medium.ttf"]
+          "fonts": [
+            "./assets/fonts/TT-Octosquares-Medium.ttf"
+          ]
         }
       ]
     ],
@@ -46,8 +65,14 @@
     },
     "extra": {
       "eas": {
-        "projectId": "e2767c7b-218e-44d4-b14e-9975146ce9ae"
-      }
-    }
+        "projectId": "cdf557ff-b794-4e85-a3db-8922553bda3e"
+      },
+      "router": {
+        "origin": false
+      },
+      "EXPO_PUBLIC_SERVER_URI": "https://gurukul-yatra.onrender.com/api/v1",
+      "EXPO_PUBLIC_GOOGLE_CLOUD_API_KEY": "AIzaSyDZifSZzVVOLp-P60kpAqG__CBxOtQjHrU"
+    },
+    "owner": "sulavgautam"
   }
 }

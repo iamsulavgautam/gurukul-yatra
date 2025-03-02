@@ -77,7 +77,7 @@ export default function RidePlanScreen() {
   const updateUserPushToken = async (token: string) => {
     try {
       const response = await axios.post(
-        `${process.env.EXPO_PUBLIC_SERVER_URI}/user/update-push-token`,
+        `${Constants.expoConfig?.extra?.EXPO_PUBLIC_SERVER_URI}/user/update-push-token`,
         {
           userId: user.id,
           pushToken: token,
@@ -242,7 +242,7 @@ export default function RidePlanScreen() {
         {
           params: {
             input,
-            key: process.env.EXPO_PUBLIC_GOOGLE_CLOUD_API_KEY,
+            key: Constants.expoConfig?.extra?.EXPO_PUBLIC_GOOGLE_CLOUD_API_KEY,
             language: "en",
           },
         }
@@ -319,7 +319,7 @@ export default function RidePlanScreen() {
       let params = {
         origins: `${origin.latitude},${origin.longitude}`,
         destinations: `${destination.latitude},${destination.longitude}`,
-        key: process.env.EXPO_PUBLIC_GOOGLE_CLOUD_API_KEY!,
+        key: Constants.expoConfig?.extra?.EXPO_PUBLIC_GOOGLE_CLOUD_API_KEY!,
         mode: mode,
       } as any;
 
@@ -353,7 +353,7 @@ export default function RidePlanScreen() {
         {
           params: {
             place_id: placeId,
-            key: process.env.EXPO_PUBLIC_GOOGLE_CLOUD_API_KEY,
+            key: Constants.expoConfig?.extra?.EXPO_PUBLIC_GOOGLE_CLOUD_API_KEY,
           },
         }
       );
@@ -396,7 +396,7 @@ export default function RidePlanScreen() {
     // Extract driver IDs from the drivers array
     const driverIds = drivers.map((driver: any) => driver.id).join(",");
     const response = await axios.get(
-      `${process.env.EXPO_PUBLIC_SERVER_URI}/driver/get-drivers-data`,
+      `${Constants.expoConfig?.extra?.EXPO_PUBLIC_SERVER_URI}/driver/get-drivers-data`,
       {
         params: { ids: driverIds },
       }
@@ -471,10 +471,10 @@ export default function RidePlanScreen() {
     try {
       // Get the location names
       const currentLocationName = await axios.get(
-        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${currentLocation?.latitude},${currentLocation?.longitude}&key=${process.env.EXPO_PUBLIC_GOOGLE_CLOUD_API_KEY}`
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${currentLocation?.latitude},${currentLocation?.longitude}&key=${Constants.expoConfig?.extra?.EXPO_PUBLIC_GOOGLE_CLOUD_API_KEY}`
       );
       const destinationLocationName = await axios.get(
-        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${marker?.latitude},${marker?.longitude}&key=${process.env.EXPO_PUBLIC_GOOGLE_CLOUD_API_KEY}`
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${marker?.latitude},${marker?.longitude}&key=${Constants.expoConfig?.extra?.EXPO_PUBLIC_GOOGLE_CLOUD_API_KEY}`
       );
   
       // Prepare the data for notifications
@@ -549,7 +549,7 @@ export default function RidePlanScreen() {
               <MapViewDirections
                 origin={currentLocation}
                 destination={marker}
-                apikey={process.env.EXPO_PUBLIC_GOOGLE_CLOUD_API_KEY!}
+                apikey={Constants.expoConfig?.extra?.EXPO_PUBLIC_GOOGLE_CLOUD_API_KEY!}
                 strokeWidth={4}
                 strokeColor="blue"
               />
@@ -767,7 +767,7 @@ export default function RidePlanScreen() {
     }]);
   }}
   query={{
-    key: process.env.EXPO_PUBLIC_GOOGLE_CLOUD_API_KEY,
+    key: Constants.expoConfig?.extra?.EXPO_PUBLIC_GOOGLE_CLOUD_API_KEY,
     language: "en",
     // Add these parameters for 24km radius
     location: `${currentLocation?.latitude},${currentLocation?.longitude}`,

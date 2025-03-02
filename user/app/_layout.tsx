@@ -5,6 +5,7 @@ import { Stack } from "expo-router";
 import { ToastProvider } from "react-native-toast-notifications";
 import { LogBox } from "react-native";
 import { useFonts } from "expo-font";
+import React from "react";
 
 export {
   // Catch any errors thrown by the Layout component.

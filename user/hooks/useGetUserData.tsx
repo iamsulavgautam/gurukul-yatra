@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import Constants  from "expo-constants";
 
 export const useGetUserData = () => {
   const [user, setUser] = useState<UserType>();
@@ -10,7 +11,7 @@ export const useGetUserData = () => {
     const getLoggedInUserData = async () => {
       const accessToken = await AsyncStorage.getItem("accessToken");
       await axios
-        .get(`${process.env.EXPO_PUBLIC_SERVER_URI}/me`, {
+        .get(`${Constants.expoConfig?.extra?.EXPO_PUBLIC_SERVER_URI}/me`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },

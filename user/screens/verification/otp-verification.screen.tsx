@@ -12,6 +12,7 @@ import { commonStyles } from "@/styles/common.style";
 import { router, useLocalSearchParams } from "expo-router";
 import { useToast } from "react-native-toast-notifications";
 import axios from "axios";
+import Constants from "expo-constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function OtpVerificationScreen() {
@@ -29,7 +30,7 @@ export default function OtpVerificationScreen() {
       setLoader(true);
       const otpNumbers = `${otp}`;
       await axios
-        .post(`${process.env.EXPO_PUBLIC_SERVER_URI}/verify-otp`, {
+        .post(`${Constants.expoConfig?.extra?.EXPO_PUBLIC_SERVER_URI}/verify-otp`, {
           phone_number: phoneNumber,
           otp: otpNumbers,
         })
