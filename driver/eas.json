@@ -1,37 +1,37 @@
 {
-  "cli": {
-    "version": ">= 15.0.12",
-    "appVersionSource": "remote"
-  },
-  "build": {
-    "development": {
-      "developmentClient": true,
-      "distribution": "internal"
+    "cli": {
+      "version": ">= 15.0.12",
+      "appVersionSource": "remote"
     },
-    "preview": {
-      "distribution": "internal"
-    }, 
-    "preview1": {
-      "android": {
-        "buildType": "apk",
-        
+    "build": {
+      "development": {
+        "developmentClient": true,
+        "distribution": "internal"
+      },
+      "preview": {
+        "distribution": "internal"
+      }, 
+      "preview1": {
+        "android": {
+          "buildType": "apk",
+          
+        }
+      },
+      "preview2": {
+        "android": {
+          "gradleCommand": ":app:assembleRelease"
+        }
+      },
+      "production": {
+        "autoIncrement": true,
+        "distribution": "internal",  // Or "store" if you plan to submit to the Play Store
+        "android": {
+          "buildType": "apk", // Specify APK build type here
+          "gradleCommand": ":app:assembleRelease" // Optional: Use if you need custom gradle commands
+        }
       }
     },
-    "preview2": {
-      "android": {
-        "gradleCommand": ":app:assembleRelease"
-      }
-    },
-    "production": {
-      "autoIncrement": true,
-      "distribution": "internal",  // Or "store" if you plan to submit to the Play Store
-      "android": {
-        "buildType": "apk", // Specify APK build type here
-        "gradleCommand": ":app:assembleRelease" // Optional: Use if you need custom gradle commands
-      }
+    "submit": {
+      "production": {}
     }
-  },
-  "submit": {
-    "production": {}
   }
-}
