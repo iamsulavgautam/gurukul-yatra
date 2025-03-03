@@ -195,7 +195,7 @@ export const sendingOtpToEmail = async (req: Request, res: Response) => {
           subject: "Verify your email address!",
           body: `
             <p>Hi ${name},</p>
-        <p>Your Gurukul Yatra verification code is ${otp}. If you didn't request for this OTP, please ignore this email!</p>
+        <p>Your Gurukul Yatra Driver verification code is ${otp}. If you didn't request for this OTP, please ignore this email!</p>
         <p>Thanks,<br>Gurukul Yatra Team</p>
             `,
         },

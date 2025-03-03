@@ -25,7 +25,7 @@ export default function EmailVerificationScreen() {
 
     const otpNumbers = `${otp}`;
     await axios
-      .put(`${Constants.expoConfig?.extra?.EXPO_PUBLIC_SERVER_URII}/email-otp-verify`, {
+      .put(`${Constants.expoConfig?.extra?.EXPO_PUBLIC_SERVER_URI}/email-otp-verify`, {
         token: parsedUser.token,
         otp: otpNumbers,
       })
